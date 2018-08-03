@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>后台管理系统登陆</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <script src="layui/layui.js"></script>
+    <style>
+        /*.carousel_div1{*/
+            /*background: url(/img/login-bg1.jpg) fixed center center;*/
+        /*}*/
+        /*.carousel_div2{*/
+            /*background: url(/img/login-bg2.jpg) fixed center center;*/
+        /*}*/
+        /*.carousel_div3{*/
+            /*background: url(/img/login-bg3.jpg) fixed center center;*/
+        /*}*/
+
+
+
+        body {
+            overflow: hidden;
+        }
+        .layer_notice {
+            background: #5fb878 none repeat scroll 0 0;
+            float: left;
+            height: 75px;
+            overflow: hidden;
+            padding: 10px;
+            width: 330px;
+        }
+        .layer_notice ul li {
+            color: #fff;
+        }
+        .video-player {
+            background-color: transparent;
+            min-width: 100%;
+            min-height: 100%;
+            display: block;
+            position: absolute;
+            z-index: 1;
+            top: 0;
+        }
+
+        .video_mask {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 90;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .login {
+            height: 220px;
+            width: 300px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin: -150px 0 0 -150px;
+            z-index: 99;
+        }
+
+        .login h1 {
+            text-align: center;
+            color: #fff;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .form_code {
+            position: relative;
+        }
+
+        .form_code .code {
+            position: absolute;
+            right: 0;
+            top: 1px;
+            cursor: pointer;
+        }
+
+        .login_btn {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-carousel video_mask" id="login_carousel" >
+    <div carousel-item>
+        <div class="carousel_div1"></div>
+        <div class="carousel_div2"></div>
+        <div class="carousel_div3"></div>
+    </div>
+    <div class="login layui-anim layui-anim-up">
+        <h1>后台管理系统</h1>
+        <form class="layui-form"  method="post">
+            <div class="layui-form-item">
+                <input type="text" name="username" lay-verify="required" placeholder="请输入账号" autocomplete="off"  value="" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <input type="password" name="password" lay-verify="required" placeholder="请输入密码" autocomplete="off" value="" class="layui-input">
+            </div>
+            <!--            <div class="layui-form-item form_code">
+                            <input class="layui-input" name="code" placeholder="验证码" lay-verify="required" type="text" autocomplete="off">
+                            <div class="code"><img src="/captcha.do" width="116" height="36"></div>
+                        </div>-->
+
+            <button class="layui-btn login_btn" lay-submit="" lay-filter="login">登陆系统</button>
+        </form>
+    </div>
+
+</div>
+</body>
+
+</html>
+<script>
+    layui.use(['form','layer','jquery','carousel'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            carousel = layui.carousel;
+
+        /**背景图片轮播*/
+        carousel.render({
+            elem: '#login_carousel',
+            width: '100%',
+            height: '100%',
+            interval:2000,
+            arrow: 'none',
+            anim: 'fade',
+            indicator:'none'
+        });
+
+        /*        /!**重新生成验证码*!/
+         function reqCaptcha() {
+         var url = "/captcha.do?nocache=" + new Date().getTime()
+         $('.code img').attr("src",url)
+         }
+         /!**点击验证码重新生成*!/
+         $('.code img').on('click', function () {
+         reqCaptcha();
+         });*/
+
+        /**监听登陆提交*/
+        form.on('submit(login)', function (formdata) {
+            //弹出loading
+            var loginLoading = top.layer.msg('登陆中，请稍候', {icon: 16, time: false, shade: 0.8});
+            //记录ajax请求返回值
+            //登陆验证
+            $.ajax({
+                url: '/Login',
+                type: 'get',
+                data: formdata.field,
+                success: function (data) {
+                    console.log(data)
+                    if(data == "success"){
+                        top.layer.close(loginLoading);
+                        window.location.href="index.html";
+                    }else
+                    {
+                        layer.alert("账号密码错误");
+                    }
+                }
+            });
+            return false;
+        });
+    });
+
+</script>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>后台管理系统</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <script src="layui/layui.js"></script>
+    <script src="js/user.js"></script>
+</head>
+<body>
+<!--操作栏-->
+<div style="padding: 10px">
+    <!--添加按钮-->
+    <button class="layui-btn layui-btn-danger" onclick="moredelete()">
+        <i class="layui-icon">&#xe640;</i> 批量删除
+    </button>
+    <!--删除按钮-->
+    <button class="layui-btn" onclick="add()">
+        <i class="layui-icon">&#xe608;</i> 添加
+    </button>
+    <!--刷新按钮-->
+    <button class="layui-btn" onclick="reload()">
+        <i class="layui-icon">&#x1002;</i> 刷新
+    </button>
+    <!--精准查询和模糊查询-->
+    <div style="float: right">
+        <div class="layui-input-inline">
+            <input type="text" name="find" required lay-verify="required" placeholder="" autocomplete="off"
+                   class="layui-input">
+        </div>
+        <button class="layui-btn layui-btn-normal" onclick="find()" style="margin-right: 10px">
+            <i class="layui-icon">&#xe615;</i> 查询
+        </button>
+        <div class="layui-input-inline">
+            <input type="text" name="like" required lay-verify="required" placeholder="" autocomplete="off"
+                   class="layui-input">
+        </div>
+        <button class="layui-btn layui-btn-normal" onclick="like()" style="margin-right: 10px">
+            <i class="layui-icon">&#xe615;</i> 模糊查询
+        </button>
+    </div>
+
+</div>
+<!--数据表格-->
+<div>
+    <!--表格-->
+    <table class="layui-table" id="demo" lay-filter="test" lay-data="{id: 'idTest'}"></table>
+</div>
+</body>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-normal layui-btn-sm " lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-warm layui-btn-sm" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="seeDOM_template">
+    <div>
+        <div class="layui-progress" lay-showpercent="true" lay-filter="progressdemo">
+            <div class="layui-progress-bar layui-bg-blue" lay-percent="0%"></div>
+        </div>
+        <div style="padding: 5px">
+            <form class="layui-form" action="" id="see">
+                <div class="layui-form-item" style="display: none">
+                    <label class="layui-form-label">用户ID</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="userId_see" placeholder="用户ID"
+                               autocomplete="off"
+                               class="layui-input" readonly>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="userName_see" placeholder="用户名称"
+                               autocomplete="off"
+                               class="layui-input" readonly>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户密码：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="password_see" placeholder="用户密码"
+                               autocomplete="off"
+                               class="layui-input" readonly>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">性别：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="sex_see" placeholder="性别"
+                               autocomplete="off"
+                               class="layui-input" readonly>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">年龄：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="age_see" placeholder="年龄"
+                               autocomplete="off"
+                               class="layui-input" readonly>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">电话：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="phoneNumber_see" placeholder="电话"
+                               autocomplete="off"
+                               class="layui-input" readonly>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">创建时间：</label>
+                    <div class="layui-input-block">
+                            <input type="text" name="creationDate_see" id="creationDate_see" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" readonly>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">更新时间</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="lastUpdateDate_see" id="lastUpdateDate_see" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" readonly>
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">备注：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="comments_see" placeholder="备注"
+                               autocomplete="off"
+                               class="layui-input" readonly>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="addDOM_template">
+    <div>
+        <div class="layui-progress" lay-showpercent="true" lay-filter="progressdemo">
+            <div class="layui-progress-bar layui-bg-blue" lay-percent="0%"></div>
+        </div>
+        <div style="padding: 5px">
+            <form class="layui-form" action="" id="add">
+                <div class="layui-form-item" style="display: none">
+                    <label class="layui-form-label">用户ID</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="userId_add" placeholder="用户ID"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="userName_add" placeholder="用户名称"
+                               autocomplete="off"
+                               class="layui-input" required lay-verify="required">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户密码：</label>
+                    <div class="layui-input-block">
+                        <input type="password" name="password_add" placeholder="用户密码"
+                               autocomplete="off"
+                               class="layui-input" required lay-verify="required">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">性别：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="sex_add" placeholder="性别"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">年龄：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="age_add" placeholder="年龄"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">电话：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="phoneNumber_add" placeholder="电话"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">创建时间：</label>
+                    <div class="layui-input-block">
+                            <input type="text" name="creationDate_add" id="creationDate_add" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" required lay-verify="required">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">更新时间</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="lastUpdateDate_add" id="lastUpdateDate_add" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">备注：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="comments_add" placeholder="备注"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit="" lay-filter="submit_add">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="editDOM_template">
+    <div>
+        <div class="layui-progress" lay-showpercent="true" lay-filter="progressdemo">
+            <div class="layui-progress-bar layui-bg-blue" lay-percent="0%"></div>
+        </div>
+        <div style="padding: 5px">
+            <form class="layui-form" action="" id="edit">
+                <div class="layui-form-item" style="display: none">
+                    <label class="layui-form-label">用户ID</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="userId_edit" placeholder="用户ID"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="userName_edit" placeholder="用户名称"
+                               autocomplete="off"
+                               class="layui-input" required lay-verify="required">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户密码：</label>
+                    <div class="layui-input-block">
+                        <input type="password" name="password_edit" placeholder="用户密码"
+                               autocomplete="off"
+                               class="layui-input" required lay-verify="required">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">性别：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="sex_edit" placeholder="性别"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">年龄：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="age_edit" placeholder="年龄"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">电话：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="phoneNumber_edit" placeholder="电话"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">创建时间：</label>
+                    <div class="layui-input-block">
+                            <input type="text" name="creationDate_edit" id="creationDate_edit" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" required lay-verify="required">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">更新时间</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="lastUpdateDate_edit" id="lastUpdateDate_edit" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">备注：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="comments_edit" placeholder="备注"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit="" lay-filter="submit_edit">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</script>
+</html>
